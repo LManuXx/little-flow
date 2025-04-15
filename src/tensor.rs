@@ -12,10 +12,10 @@ impl<T> Tensor<T>
 where
     T: Copy + Add<Output = T> + Mul<Output = T> + Default,
 {
-    fn new(accuracy: Accuracy, data: Vec<T>, shape: Vec<usize>) -> Self {
+    pub fn new(accuracy: Accuracy, data: Vec<T>, shape: Vec<usize>) -> Self {
         let size = shape.iter().product();
 
-        if (size != data.len()) {
+        if size != data.len() {
             panic!("Error: The number of elements doesn't match with Tensor shape");
         }
 
@@ -27,7 +27,7 @@ where
         }
     }
 
-    fn add(&self, other: &Tensor<T>) -> Tensor<T> {
+    pub fn add(&self, other: &Tensor<T>) -> Tensor<T> {
         if self.shape != other.shape {
             panic!("Error: Cannot add Tensors with different shapes");
         }
@@ -51,7 +51,7 @@ where
         }
     }
 
-    fn map<F>(&self, func: F) -> Tensor<T>
+    pub fn map<F>(&self, func: F) -> Tensor<T>
     where
         F: Fn(T) -> T,
     {
@@ -65,7 +65,7 @@ where
         }
     }
 
-    fn matmul(&self, other: &Tensor<T>) -> Tensor<T> {
+    pub fn matmul(&self, other: &Tensor<T>) -> Tensor<T> {
         if self.shape.len() != 2 || other.shape.len() != 2 {
             panic!("Error: Matmul only supports 2D tensors");
         }
