@@ -1,6 +1,9 @@
 use std::ops::{Add, Mul};
 
-use crate::{tensor::Tensor, types::Accuracy, types::Randomizable};
+use crate::{
+    tensor::{self, Tensor},
+    types::{Accuracy, Randomizable},
+};
 
 struct DenseLayer<T> {
     weights: Tensor<T>,
@@ -24,4 +27,25 @@ where
 
         DenseLayer { weights, bias }
     }
+
+    pub fn forward(&self, input: &Tensor<T>) -> Result<Tensor<T>, String> {
+        if input.get_shape().len() != 2 {
+            return Err("Input tensor must be 2D".into());
+        }
+    
+        if input.get_shape()[1] != self.weights.get_shape()[0] {
+            return Err("Input tensor size does not match weight matrix".into());
+        }
+    
+        if self.bias.get_shape().len() != 1 || self.bias.get_shape()[0] != self.weights.get_shape()[1] {
+            return Err("Bias shape is not compatible with output shape".into());
+        }
+    
+        let linear_output = input.matmul(&self.weights);
+    
+        let output = linear_output.add(&self.bias);
+    
+        Ok(output)
+    }
+    
 }

@@ -99,4 +99,20 @@ where
             accuracy: self.accuracy, // Puedes decidir si copiar el accuracy de self o de other
         }
     }
+
+    pub fn get_shape(&self) -> &Vec<usize> {
+        &self.shape
+    }
+
+    pub fn get_data(&self) -> &Vec<T> {
+        &self.data
+    }
+
+    pub fn get_size(&self) -> usize {
+        self.size
+    }
+    
+    pub fn get_accuracy(&self) -> &Accuracy {
+        &self.accuracy
+    }
 }
