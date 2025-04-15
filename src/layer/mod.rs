@@ -1,1 +1,2 @@
-mod dense;
+pub mod dense;
+pub mod activation;

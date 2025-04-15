@@ -2,8 +2,12 @@ use std::ops::{Add, Mul};
 
 use crate::{
     tensor::{self, Tensor},
-    types::{Accuracy, Randomizable},
+    types::{Accuracy, Randomizable}
 };
+
+use crate::layer::activation::ActivationFn;
+
+
 
 struct DenseLayer<T> {
     weights: Tensor<T>,
@@ -28,7 +32,7 @@ where
         DenseLayer { weights, bias }
     }
 
-    pub fn forward(&self, input: &Tensor<T>) -> Result<Tensor<T>, String> {
+    pub fn forward(&self, input: &Tensor<T>, activation: Option<ActivationFn<T>>) -> Result<Tensor<T>, String> {
         if input.get_shape().len() != 2 {
             return Err("Input tensor must be 2D".into());
         }
@@ -44,8 +48,14 @@ where
         let linear_output = input.matmul(&self.weights);
     
         let output = linear_output.add(&self.bias);
-    
-        Ok(output)
+
+        match activation {
+            Some(activation_fn) => {
+                let activated_output = output.map(activation_fn);
+                Ok(activated_output)
+            }
+            None => Ok(output),
+        }
     }
     
 }
