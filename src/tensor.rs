@@ -1,6 +1,6 @@
 use crate::types::Accuracy;
 use std::ops::{Add, Mul, Sub};
-
+#[derive(Clone)]
 pub struct Tensor<T> {
     data: Vec<T>,      // Linear colection of values [1,2,3,4...]
     shape: Vec<usize>, // How the data is organized [2,3] 2 rows 3 columns
@@ -134,6 +134,24 @@ where
         accuracy: self.accuracy,
     }
 }
+
+pub fn sum_all(&self) -> Tensor<T>
+where
+    T: Copy + Add<Output = T> + Default,
+{
+    let mut total = T::default();
+    for &x in &self.data {
+        total = total + x;
+    }
+
+    Tensor {
+        data: vec![total],
+        shape: vec![1],
+        size: 1,
+        accuracy: self.accuracy,
+    }
+}
+
 
     
 
