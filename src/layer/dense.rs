@@ -1,25 +1,22 @@
-use std::ops::{Add, Mul};
+use std::ops::{Add, Mul, Sub};
 
 use crate::{
-    tensor::{self, Tensor},
-    types::{Accuracy, Randomizable}
+    tensor::Tensor,
+    types::{Accuracy, Randomizable},
 };
 
 use crate::layer::activation::ActivationFn;
 
-
-
-struct DenseLayer<T> {
+pub struct DenseLayer<T> {
     weights: Tensor<T>,
     bias: Tensor<T>,
 }
 
 impl<T> DenseLayer<T>
 where
-    T: Randomizable,
-    T: Randomizable + Copy + Add<Output = T> + Mul<Output = T> + Default,
+    T: Randomizable + Copy + Add<Output = T> + Mul<Output = T> + Default + Sub<Output = T>,
 {
-    fn new(input_size: usize, output_size: usize, accuracy: Accuracy) -> DenseLayer<T> {
+    pub fn new(input_size: usize, output_size: usize, accuracy: Accuracy) -> DenseLayer<T> {
         let weight_data: Vec<T> = (0..input_size * output_size)
             .map(|_| T::random_weight())
             .collect();
@@ -32,21 +29,27 @@ where
         DenseLayer { weights, bias }
     }
 
-    pub fn forward(&self, input: &Tensor<T>, activation: Option<ActivationFn<T>>) -> Result<Tensor<T>, String> {
+    pub fn forward(
+        &self,
+        input: &Tensor<T>,
+        activation: Option<ActivationFn<T>>,
+    ) -> Result<Tensor<T>, String> {
         if input.get_shape().len() != 2 {
             return Err("Input tensor must be 2D".into());
         }
-    
+
         if input.get_shape()[1] != self.weights.get_shape()[0] {
             return Err("Input tensor size does not match weight matrix".into());
         }
-    
-        if self.bias.get_shape().len() != 1 || self.bias.get_shape()[0] != self.weights.get_shape()[1] {
+
+        if self.bias.get_shape().len() != 1
+            || self.bias.get_shape()[0] != self.weights.get_shape()[1]
+        {
             return Err("Bias shape is not compatible with output shape".into());
         }
-    
+
         let linear_output = input.matmul(&self.weights);
-    
+
         let output = linear_output.add(&self.bias);
 
         match activation {
@@ -57,5 +60,4 @@ where
             None => Ok(output),
         }
     }
-    
 }

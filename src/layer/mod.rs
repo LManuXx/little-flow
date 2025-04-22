@@ -1,2 +1,2 @@
-pub mod dense;
 pub mod activation;
+pub mod dense;

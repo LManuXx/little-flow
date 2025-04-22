@@ -4,11 +4,7 @@ pub fn relu<T>(x: T) -> T
 where
     T: Copy + PartialOrd + Default,
 {
-    if x > T::default() {
-        x
-    } else {
-        T::default()
-    }
+    if x > T::default() { x } else { T::default() }
 }
 
 use num_traits::Float;
