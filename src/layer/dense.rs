@@ -116,7 +116,8 @@ where
 
 impl<T> TrainableLayer<T> for DenseLayer<T>
 where
-    T: Copy
+    T: 'static
+        +Copy
         + Default
         + std::ops::Add<Output = T>
         + std::ops::Sub<Output = T>
