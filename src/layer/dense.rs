@@ -7,6 +7,8 @@ use crate::{
 
 use crate::layer::activation::ActivationFn;
 
+use super::trainable::TrainableLayer;
+
 pub struct DenseLayer<T> {
     weights: Tensor<T>,
     bias: Tensor<T>,
@@ -109,5 +111,32 @@ where
         }
         self.bias = (*new_bias).clone();
     }
-    
+
 }
+
+impl<T> TrainableLayer<T> for DenseLayer<T>
+where
+    T: Copy
+        + Default
+        + std::ops::Add<Output = T>
+        + std::ops::Sub<Output = T>
+        + std::ops::Mul<Output = T>
+        + From<f32>
+        + std::fmt::Debug
+        + Randomizable,
+{
+    fn forward(&self, input: &Tensor<T>, activation: Option<fn(T) -> T>) -> Result<Tensor<T>, String> {
+        DenseLayer::forward(self, input, activation)
+    }
+    
+
+    fn backward(&self, input: &Tensor<T>, grad_output: &Tensor<T>) -> (Tensor<T>, Tensor<T>, Tensor<T>) {
+        self.backward(input, grad_output)
+    }
+
+    fn update_params(&mut self, grad_w: &Tensor<T>, grad_b: &Tensor<T>, learning_rate: T) {
+        self.weights = self.weights.sub(&grad_w.scale(learning_rate));
+        self.bias = self.bias.sub(&grad_b.scale(learning_rate));
+    }
+}
+

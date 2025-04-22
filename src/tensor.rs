@@ -306,4 +306,20 @@ where
     pub fn get_accuracy(&self) -> &Accuracy {
         &self.accuracy
     }
+
+    pub fn get(&self, index: usize) -> Option<&T> {
+        if index < self.size {
+            Some(&self.data[index])
+        } else {
+            None
+        }
+    }
+
+    pub fn to_scalar(&self) -> T {
+        if self.size == 1 {
+            self.data[0]
+        } else {
+            panic!("Error: Tensor is not scalar");
+        }
+    }
 }
